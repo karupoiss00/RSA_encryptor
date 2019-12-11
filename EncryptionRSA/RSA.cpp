@@ -41,7 +41,7 @@ long int RSA::Encrypt(long int i)
 {
 	long int current, result;
 
-	current = i - 97;
+	current = i;
 	result = 1;
 
 	for (long int j = 0; j < e; j++)
@@ -66,7 +66,7 @@ long int RSA::Decrypt(long int i)
 		result = result % n;
 	}
 
-	return result + 97;
+	return result;
 }
 
 long int RSA::GreatestCommonDivisor(long int e, long int t)

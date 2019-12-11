@@ -5,6 +5,11 @@
 
 using namespace std;
 
+void CryptStr(RSA* crypter, string str);
+void DecryptStr(RSA* crypter, size_t strLength);
+void PrintCryptedStr(RSA* crypter, size_t strLength);
+void PrintDecryptedStr(RSA* crypter, size_t strLength);
+
 int main()
 {
 	RSA crypter;
@@ -25,34 +30,47 @@ int main()
 	cout << "K(e) = (" << crypter.n << ", " << crypter.e << ")" << endl;
 	cout << "K(d) = (" << crypter.n << ", " << crypter.d << ")" << endl;
 
-
 	cout << "Message to encrypting:" << endl;
 	cin.ignore();
 	getline(cin, msg);
 
-
-	for (long int i = 0; i < msg.length(); i++)
-	{
-		crypter.encryptedText[i] = crypter.Encrypt(msg[i]);
-	}
-	cout << endl << "Encrypted:" << endl;
-	for (long int i = 0; i < msg.length(); i++)
-	{
-		cout << static_cast<char>(crypter.encryptedText[i]);
-	}
-
-
-	for (long int i = 0; i < msg.length(); i++)
-	{
-		crypter.decryptedText[i] = crypter.Decrypt(crypter.encryptedText[i]);
-	}
-	cout << endl << "Decrypted:" << endl;
-	for (long int i = 0; i < msg.length(); i++)
-	{
-		cout << static_cast<char>(crypter.decryptedText[i]);
-	}
-
+	CryptStr(&crypter, msg);
+	DecryptStr(&crypter, msg.length());
+	PrintCryptedStr(&crypter, msg.length());
+	PrintDecryptedStr(&crypter, msg.length());
 
 	cout << endl;
 	return 0;
+}
+
+void CryptStr(RSA* crypter, string str)
+{
+	for (long int i = 0; i < str.length(); i++)
+	{
+		crypter->encryptedText[i] = crypter->Encrypt(str[i]);
+	}
+}
+
+void DecryptStr(RSA* crypter, size_t strLength)
+{
+	for(long int i = 0; i < strLength; i++)
+	{
+		crypter->decryptedText[i] = crypter->Decrypt(crypter->encryptedText[i]);
+	}
+}
+void PrintCryptedStr(RSA* crypter, size_t strLength)
+{
+	cout << endl << "Encrypted:" << endl;
+	for (long int i = 0; i < strLength; i++)
+	{
+		cout << static_cast<char>(crypter->encryptedText[i]);
+	}
+}
+void PrintDecryptedStr(RSA* crypter, size_t strLength)
+{
+	cout << endl << "Decrypted:" << endl;
+	for (long int i = 0; i < strLength; i++)
+	{
+		cout << static_cast<char>(crypter->decryptedText[i]);
+	}
 }
