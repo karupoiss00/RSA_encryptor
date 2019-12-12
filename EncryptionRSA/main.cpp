@@ -46,32 +46,62 @@ int main()
 
 void CryptStr(RSA* crypter, string str)
 {
-	for (long int i = 0; i < str.length(); i++)
+	size_t j = 0;
+	Bigram decrypted;
+	Trigram encrypted;
+
+	if (str.length() % 2 != 0)
 	{
-		crypter->encryptedText[i] = crypter->Encrypt(str[i]);
+		str += ' ';
 	}
+
+	for (size_t i = 0; i < str.length(); i += 2)
+	{
+		decrypted.first = str[i]; 
+		decrypted.second = str[i + 1];
+		encrypted = crypter->Encrypt(decrypted);
+		crypter->encryptedText[j] = encrypted.first;
+		crypter->encryptedText[j + 1] = encrypted.second;
+		crypter->encryptedText[j + 2] = encrypted.third;
+		j += 3;
+	}
+	crypter->encryptedText[j + 1] = -1;
 }
 
 void DecryptStr(RSA* crypter, size_t strLength)
 {
-	for(long int i = 0; i < strLength; i++)
+	size_t j = 0;
+	Trigram encrypted;
+	Bigram decrypted;
+	
+	for (size_t i = 0; j < strLength; j += 2)
 	{
-		crypter->decryptedText[i] = crypter->Decrypt(crypter->encryptedText[i]);
+		encrypted.first = crypter->encryptedText[i];
+		encrypted.second = crypter->encryptedText[i + 1];
+		encrypted.third = crypter->encryptedText[i + 2];
+
+		decrypted = crypter->Decrypt(encrypted);
+		crypter->decryptedText[j] = decrypted.first;
+		crypter->decryptedText[j + 1] = decrypted.second;
+		i += 3;
 	}
 }
 void PrintCryptedStr(RSA* crypter, size_t strLength)
 {
+	size_t i = 0;
 	cout << endl << "Encrypted:" << endl;
-	for (long int i = 0; i < strLength; i++)
+	
+	while (crypter->encryptedText[i] != -1)
 	{
-		cout << static_cast<char>(crypter->alphabetRU[crypter->encryptedText[i] % crypter->alphabetRU.length()]);
+		cout << static_cast<char>(crypter->alphabetRU[crypter->encryptedText[i]]);
+		i++;
 	}
 }
 void PrintDecryptedStr(RSA* crypter, size_t strLength)
 {
 	cout << endl << "Decrypted:" << endl;
-	for (long int i = 0; i < strLength; i++)
+	for (size_t i = 0; i < strLength; i++)
 	{
-		cout << static_cast<char>(crypter->alphabetRU[crypter->decryptedText[i] % crypter->alphabetRU.length()]);
+		cout << static_cast<char>(crypter->alphabetRU[crypter->decryptedText[i]]);
 	}
 }

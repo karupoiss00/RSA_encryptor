@@ -39,26 +39,36 @@ void RSA::CalculateD()
 	d = (k / e);
 }
 
-long int RSA::Encrypt(long int i)
+Trigram RSA::Encrypt(Bigram i)
 {
-	long int current, result;
-	current = GetNumberFromAlphabet((char)i);
-	result = 1;
-	
+	long int firstSymbol = GetNumberFromAlphabet((char)i.first);
+	long int secondSymbol = GetNumberFromAlphabet((char)i.second);
+	long int current = firstSymbol * alphabet.length() + secondSymbol;
+	long int result = 1;
+
+	Trigram encrypted;
+
 	for (long int j = 0; j < e; j++)
 	{
 		result = result * current;
 		result = result % n;
 	}
-	return result;
+
+	encrypted.first = (result / (alphabet.length() * alphabet.length())) % alphabet.length();
+	encrypted.second = (result / alphabet.length()) % alphabet.length();
+	encrypted.third = result % alphabet.length();
+
+	return encrypted;
 }
 
-long int RSA::Decrypt(long int i)
+Bigram RSA::Decrypt(Trigram i)
 {
-	long int current, result;
+	long int current = i.first * alphabet.length() * alphabet.length() 
+						+ i.second * alphabet.length() 
+						+ i.third;
+	long int result = 1;
 
-	current = i;
-	result = 1;
+	Bigram decrypted;
 
 	for (long int j = 0; j < d; j++)
 	{
@@ -66,7 +76,10 @@ long int RSA::Decrypt(long int i)
 		result = result % n;
 	}
 
-	return result;
+	decrypted.first = result / alphabet.length();
+	decrypted.second = result % alphabet.length();
+
+	return decrypted;
 }
 
 long int RSA::GreatestCommonDivisor(long int e, long int t)
@@ -92,4 +105,5 @@ int RSA::GetNumberFromAlphabet(char c)
 			return i;
 		}
 	}
+	return -1;
 }

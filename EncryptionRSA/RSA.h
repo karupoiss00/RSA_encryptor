@@ -1,6 +1,19 @@
 #pragma once
 #include <iostream>
 
+struct Bigram
+{
+	long int first;
+	long int second;
+};
+
+struct Trigram
+{
+	long int first;
+	long int second;
+	long int third;
+};
+
 struct RSA
 {
 	long int p, q, n, t, e, d;
@@ -16,8 +29,8 @@ struct RSA
 	void CalculateE();
 	void CalculateD();
 
-	long int Encrypt(long int i);
-	long int Decrypt(long int i);
+	Trigram Encrypt(Bigram i);
+	Bigram Decrypt(Trigram i);
 	long int GreatestCommonDivisor(long int e, long int t);
 
 	int GetNumberFromAlphabet(char c);
