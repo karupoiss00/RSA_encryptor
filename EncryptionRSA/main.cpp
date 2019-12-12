@@ -12,6 +12,7 @@ void PrintDecryptedStr(RSA* crypter, size_t strLength);
 
 int main()
 {
+	setlocale(LC_ALL, "RU");
 	RSA crypter;
 	string msg;
 
@@ -63,7 +64,7 @@ void PrintCryptedStr(RSA* crypter, size_t strLength)
 	cout << endl << "Encrypted:" << endl;
 	for (long int i = 0; i < strLength; i++)
 	{
-		cout << static_cast<char>(crypter->encryptedText[i]);
+		cout << static_cast<char>(crypter->alphabetRU[crypter->encryptedText[i] % crypter->alphabetRU.length()]);
 	}
 }
 void PrintDecryptedStr(RSA* crypter, size_t strLength)
@@ -71,6 +72,6 @@ void PrintDecryptedStr(RSA* crypter, size_t strLength)
 	cout << endl << "Decrypted:" << endl;
 	for (long int i = 0; i < strLength; i++)
 	{
-		cout << static_cast<char>(crypter->decryptedText[i]);
+		cout << static_cast<char>(crypter->alphabetRU[crypter->decryptedText[i] % crypter->alphabetRU.length()]);
 	}
 }

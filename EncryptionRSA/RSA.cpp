@@ -4,6 +4,8 @@ RSA::RSA()
 {
 	memset(encryptedText, 0, sizeof(encryptedText));
 	memset(decryptedText, 0, sizeof(decryptedText));
+	alphabet = "€‚ƒ„…ğ†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ .,!";
+	alphabetRU = "ÀÁÂÃÄÅ¨ÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞß .,!";
 }
 
 void RSA::CalculateN()
@@ -40,16 +42,14 @@ void RSA::CalculateD()
 long int RSA::Encrypt(long int i)
 {
 	long int current, result;
-
-	current = i;
+	current = GetNumberFromAlphabet((char)i);
 	result = 1;
-
+	
 	for (long int j = 0; j < e; j++)
 	{
 		result = result * current;
 		result = result % n;
 	}
-
 	return result;
 }
 
@@ -81,4 +81,15 @@ long int RSA::GreatestCommonDivisor(long int e, long int t)
 	}
 
 	return t;
+}
+
+int RSA::GetNumberFromAlphabet(char c)
+{
+	for (size_t i = 0; i < alphabet.length(); i++)
+	{
+		if (c == alphabet[i])
+		{
+			return i;
+		}
+	}
 }
