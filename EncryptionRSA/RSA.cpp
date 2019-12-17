@@ -39,7 +39,7 @@ void RSA::CalculateD()
 	d = (k / e);
 }
 
-Trigram RSA::Encrypt(Bigram i)
+Trigram RSA::Encrypt(Bigram i, bool isSignature)
 {
 	long int firstSymbol = GetNumberFromAlphabet((char)i.first);
 	long int secondSymbol = GetNumberFromAlphabet((char)i.second);
@@ -47,11 +47,21 @@ Trigram RSA::Encrypt(Bigram i)
 	long int result = 1;
 
 	Trigram encrypted;
-
-	for (long int j = 0; j < e; j++)
+	if (isSignature)
 	{
-		result = result * current;
-		result = result % n;
+		for (long int j = 0; j < d; j++)
+		{
+			result = result * current;
+			result = result % n;
+		}
+	}
+	else
+	{
+		for (long int j = 0; j < e; j++)
+		{
+			result = result * current;
+			result = result % n;
+		}
 	}
 
 	encrypted.first = (result / (alphabet.length() * alphabet.length())) % alphabet.length();
@@ -106,4 +116,20 @@ int RSA::GetNumberFromAlphabet(char c)
 		}
 	}
 	return -1;
+}
+
+RSA RSA::operator=(RSA right)
+{
+	if (this == &right)
+	{
+		return *this;
+	}
+	p = right.p;
+	q = right.q;
+	n = right.n;
+	t = right.t;
+	e = right.e;
+	d = right.d;
+
+	return *this;
 }

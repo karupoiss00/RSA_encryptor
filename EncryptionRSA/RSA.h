@@ -24,12 +24,14 @@ struct RSA
 
 	RSA();
 
+	RSA operator=(RSA right);
+
 	void CalculateN();
 	void CalculateT();
 	void CalculateE();
 	void CalculateD();
 
-	Trigram Encrypt(Bigram i);
+	Trigram Encrypt(Bigram i, bool isSignature);
 	Bigram Decrypt(Trigram i);
 	long int GreatestCommonDivisor(long int e, long int t);
 

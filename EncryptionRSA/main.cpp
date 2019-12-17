@@ -3,9 +3,11 @@
 #include <math.h>
 #include "RSA.h"
 
+#define DIGITAL_SIGNATURE "ђЋ‘’€‘‹Ђ‚" //РОСТИСЛАВ (корявыми символами)
+
 using namespace std;
 
-void CryptStr(RSA* crypter, string str);
+void CryptStr(RSA* crypter, string str, bool isSignature = false);
 void DecryptStr(RSA* crypter, size_t strLength);
 void PrintCryptedStr(RSA* crypter, size_t strLength);
 void PrintDecryptedStr(RSA* crypter, size_t strLength);
@@ -13,38 +15,43 @@ void PrintDecryptedStr(RSA* crypter, size_t strLength);
 int main()
 {
 	setlocale(LC_ALL, "RU");
-	RSA crypter;
+	RSA msgCrypter;
+	RSA signatureCrypter;
 	string msg;
 
 	cout << "Enter p:" << endl;
-	cin >> crypter.p;
+	cin >> msgCrypter.p;
 	cout << "Enter q:" << endl;
-	cin >> crypter.q;
+	cin >> msgCrypter.q;
 
-	crypter.CalculateN();
-	crypter.CalculateT();
-	crypter.CalculateE();
-	crypter.CalculateD();
+	msgCrypter.CalculateN();
+	msgCrypter.CalculateT();
+	msgCrypter.CalculateE();
+	msgCrypter.CalculateD();
 
-	cout << "n = " << crypter.n << endl;
-	cout << "f(n) = " << crypter.t << endl;
-	cout << "K(e) = (" << crypter.n << ", " << crypter.e << ")" << endl;
-	cout << "K(d) = (" << crypter.n << ", " << crypter.d << ")" << endl;
+	cout << "n = " << msgCrypter.n << endl;
+	cout << "f(n) = " << msgCrypter.t << endl;
+	cout << "K(e) = (" << msgCrypter.n << ", " << msgCrypter.e << ")" << endl;
+	cout << "K(d) = (" << msgCrypter.n << ", " << msgCrypter.d << ")" << endl;
+
+	signatureCrypter = msgCrypter;
 
 	cout << "Message to encrypting:" << endl;
 	cin.ignore();
 	getline(cin, msg);
 
-	CryptStr(&crypter, msg);
-	DecryptStr(&crypter, msg.length());
-	PrintCryptedStr(&crypter, msg.length());
-	PrintDecryptedStr(&crypter, msg.length());
-
+	CryptStr(&msgCrypter, msg);
+	CryptStr(&signatureCrypter, string(DIGITAL_SIGNATURE), true);
+	DecryptStr(&msgCrypter, msg.length());
+	PrintCryptedStr(&msgCrypter, msg.length());
+	PrintDecryptedStr(&msgCrypter, msg.length());
+	cout << endl << "#####Signature#####";
+	PrintCryptedStr(&signatureCrypter, string(DIGITAL_SIGNATURE).length());
 	cout << endl;
 	return 0;
 }
 
-void CryptStr(RSA* crypter, string str)
+void CryptStr(RSA* crypter, string str, bool isSignature)
 {
 	size_t j = 0;
 	Bigram decrypted;
@@ -59,7 +66,7 @@ void CryptStr(RSA* crypter, string str)
 	{
 		decrypted.first = str[i]; 
 		decrypted.second = str[i + 1];
-		encrypted = crypter->Encrypt(decrypted);
+		encrypted = crypter->Encrypt(decrypted, isSignature);
 		crypter->encryptedText[j] = encrypted.first;
 		crypter->encryptedText[j + 1] = encrypted.second;
 		crypter->encryptedText[j + 2] = encrypted.third;
